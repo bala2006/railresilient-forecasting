@@ -27,7 +27,7 @@ This is promising **single-seed evidence**, not proof of superiority. Two more v
 
 ## How the model works
 
-![R3S-MoE architecture](docs/architecture.svg)
+![R3S-MoE architecture](docs/architecture-clean.svg)
 
 1. **Observed history:** eight causally available train events.
 2. **Reliability signals:** missingness, staleness, observation age, declared delay, duplicates, inconsistencies, and no-fresh-observation state.
