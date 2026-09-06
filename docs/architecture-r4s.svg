@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="700" viewBox="0 0 1400 700" role="img" aria-labelledby="title desc">
+  <title id="title">R4S-MoE architecture with four experts and top-2 routing</title>
+  <desc id="desc">Reliability-aware train history enters a dual encoder, then a shared expert and a top-2 router select two of four low-rank specialists before the probabilistic forecast head.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#6b7d87"/></marker>
+    <style>
+      .box{stroke:#b9cbd1;stroke-width:2;rx:14;ry:14}.label{font:600 20px sans-serif;fill:#172b36}.small{font:15px sans-serif;fill:#61747e}.title{font:700 29px sans-serif;fill:#172b36}.tag{font:700 12px sans-serif;letter-spacing:1.5px;fill:#168a86}.arrow{stroke:#6b7d87;stroke-width:3;fill:none;marker-end:url(#arrow)}.route{stroke:#7465a8;stroke-width:2.5;fill:none;marker-end:url(#arrow);opacity:.75}.note{font:600 14px sans-serif;fill:#7465a8}
+    </style>
+  </defs>
+  <rect width="1400" height="700" fill="#f4f7f8"/>
+  <text x="48" y="52" class="title">R4S-MoE: shared stability + top-2 specialist routing</text>
+  <text x="50" y="82" class="small">A reliability-aware residual architecture for mixed railway disruption regimes</text>
+
+  <rect x="45" y="210" width="205" height="155" class="box" fill="#eaf3f8"/>
+  <text x="67" y="242" class="tag">INPUT</text><text x="147" y="286" text-anchor="middle" class="label">History + quality</text>
+  <text x="147" y="318" text-anchor="middle" class="small">8 events · 7 signals</text><text x="147" y="343" text-anchor="middle" class="small">mask-aware observations</text>
+
+  <rect x="315" y="180" width="250" height="215" class="box" fill="#e6f4f2"/>
+  <text x="338" y="212" class="tag">ENCODER</text><text x="440" y="257" text-anchor="middle" class="label">Dual encoder</text>
+  <text x="440" y="292" text-anchor="middle" class="small">local event mixing</text><text x="440" y="319" text-anchor="middle" class="small">quality-conditioned state</text><text x="440" y="346" text-anchor="middle" class="small">mask-gated memory</text>
+
+  <rect x="640" y="90" width="220" height="120" class="box" fill="#fff5e5"/>
+  <text x="662" y="122" class="tag">STABILITY</text><text x="750" y="162" text-anchor="middle" class="label">Shared expert</text><text x="750" y="190" text-anchor="middle" class="small">always active</text>
+
+  <rect x="640" y="275" width="220" height="120" class="box" fill="#efedf8"/>
+  <text x="662" y="307" class="tag">ROUTER</text><text x="750" y="347" text-anchor="middle" class="label">Top-2 gate</text><text x="750" y="375" text-anchor="middle" class="small">renormalized sparse weights</text>
+
+  <rect x="940" y="90" width="170" height="105" class="box" fill="#f6f1fb"/><text x="1025" y="128" text-anchor="middle" class="label">Expert 1</text><text x="1025" y="158" text-anchor="middle" class="small">normal flow</text>
+  <rect x="1160" y="90" width="170" height="105" class="box" fill="#f6f1fb"/><text x="1245" y="128" text-anchor="middle" class="label">Expert 2</text><text x="1245" y="158" text-anchor="middle" class="small">shock</text>
+  <rect x="940" y="275" width="170" height="105" class="box" fill="#f6f1fb"/><text x="1025" y="313" text-anchor="middle" class="label">Expert 3</text><text x="1025" y="343" text-anchor="middle" class="small">stale feed</text>
+  <rect x="1160" y="275" width="170" height="105" class="box" fill="#f6f1fb"/><text x="1245" y="313" text-anchor="middle" class="label">Expert 4</text><text x="1245" y="343" text-anchor="middle" class="small">recovery</text>
+
+  <rect x="940" y="490" width="300" height="125" class="box" fill="#e6f4f2"/>
+  <text x="1090" y="526" text-anchor="middle" class="tag">OUTPUT</text><text x="1090" y="563" text-anchor="middle" class="label">Forecast head</text><text x="1090" y="590" text-anchor="middle" class="small">4 horizons · 7 monotonic quantiles</text>
+
+  <path d="M250 287 L315 287" class="arrow"/><path d="M565 245 L640 150" class="arrow"/><path d="M565 330 L640 335" class="arrow"/>
+  <path d="M860 335 C895 335 900 142 940 142" class="route"/><path d="M860 335 C930 335 1080 142 1160 142" class="route"/><path d="M860 335 C895 335 900 327 940 327" class="route"/><path d="M860 335 C930 335 1080 327 1160 327" class="route"/>
+  <path d="M860 150 C905 150 900 548 940 548" class="arrow"/><path d="M1025 195 L1025 490" class="route"/><path d="M1245 195 C1245 300 1130 405 1090 490" class="route"/><path d="M1025 380 C1025 430 1050 455 1060 490" class="route"/><path d="M1245 380 C1245 430 1140 455 1120 490" class="route"/>
+  <text x="875" y="420" class="note">2 of 4 selected per event</text>
+  <text x="700" y="655" class="small">Reliability gate limits specialist influence when observations are missing, stale, or contradictory.</text>
+</svg>

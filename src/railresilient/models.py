@@ -560,7 +560,10 @@ class R3SMoE(nn.Module):
         model = config["model"]
         data = config["data"]
         hidden = model["hidden_dim"]
-        self.num_experts = model["num_experts"]
+        self.num_experts = int(model["num_experts"])
+        self.routing_top_k = int(model.get("routing_top_k", 1))
+        if not 1 <= self.routing_top_k <= self.num_experts:
+            raise ValueError("model.routing_top_k must be between 1 and model.num_experts")
         self.encoder = R3SEncoder(
             hidden,
             data["station_buckets"],
@@ -600,22 +603,33 @@ class R3SMoE(nn.Module):
         regime_features = torch.stack([current, trend, shock - recovery], dim=-1)
         logits = self.router(torch.cat([encoded, regime_features, quality], dim=-1))
         probabilities = torch.softmax(logits, dim=-1)
-        assignments = torch.argmax(probabilities, dim=-1)
+        top_weights, top_indices = torch.topk(
+            probabilities, k=self.routing_top_k, dim=-1
+        )
+        top_weights = top_weights / top_weights.sum(dim=-1, keepdim=True).clamp_min(1e-8)
+        assignments = top_indices[:, 0]
         if self.training:
-            hard = F.one_hot(assignments, self.num_experts).to(probabilities.dtype)
-            weights = hard + probabilities - probabilities.detach()
             adapter_outputs = torch.stack(
                 [adapter(encoded) for adapter in self.adapters], dim=1
             )
-            routed = torch.sum(weights[:, :, None] * adapter_outputs, dim=1)
+            selected_outputs = torch.gather(
+                adapter_outputs,
+                1,
+                top_indices[:, :, None].expand(-1, -1, encoded.shape[-1]),
+            )
+            routed = torch.sum(selected_outputs * top_weights[:, :, None], dim=1)
         else:
+            # Sparse top-k dispatch: each selected adapter only sees its assigned rows.
             routed = torch.zeros_like(encoded)
-            for index, adapter in enumerate(self.adapters):
-                selected = torch.nonzero(assignments == index, as_tuple=True)[0]
-                if selected.numel():
-                    routed.index_copy_(
-                        0, selected, adapter(encoded.index_select(0, selected))
-                    )
+            for rank in range(self.routing_top_k):
+                for index, adapter in enumerate(self.adapters):
+                    selected = torch.nonzero(
+                        top_indices[:, rank] == index, as_tuple=True
+                    )[0]
+                    if selected.numel():
+                        output = adapter(encoded.index_select(0, selected))
+                        output = output * top_weights[selected, rank, None]
+                        routed.index_add_(0, selected, output)
         reliability = torch.sigmoid(
             self.reliability_gate(torch.cat([encoded, quality], dim=-1))
         )
@@ -628,4 +642,6 @@ class R3SMoE(nn.Module):
             ),
             "router_probabilities": probabilities,
             "router_assignments": assignments,
+            "router_topk_assignments": top_indices,
+            "router_topk_weights": top_weights,
         }

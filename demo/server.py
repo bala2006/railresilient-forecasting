@@ -56,6 +56,30 @@ def build_quality(scenario: dict[str, Any], current_delay: float) -> list[float]
     return [loss, stale, max(stale, outage), declared, inconsistent, duplicate, no_fresh]
 
 
+def simulated_router(current_delay: float, trend: float, quality: list[float]) -> dict[str, Any]:
+    """Provide honest, labeled routing visuals when no learned checkpoint is available."""
+    scores = [
+        0.35 + max(0.0, 1.0 - quality[0] - quality[1]),
+        0.25 + min(1.0, abs(current_delay) / 300.0) + max(0.0, trend / 90.0),
+        0.20 + quality[0] + quality[1] + quality[2],
+        0.20 + max(0.0, -trend / 60.0),
+    ]
+    total = sum(scores)
+    probabilities = [score / total for score in scores]
+    selected = sorted(range(4), key=lambda index: probabilities[index], reverse=True)[:2]
+    selected_total = sum(probabilities[index] for index in selected)
+    experts = [
+        {"id": index + 1, "weight": round(probabilities[index] / selected_total, 3)}
+        for index in selected
+    ]
+    return {
+        "expert": experts[0]["id"],
+        "experts": experts,
+        "topK": 2,
+        "probabilities": [round(value, 3) for value in probabilities],
+    }
+
+
 class ModelAdapter:
     """Optional CPU checkpoint adapter with a deterministic fallback."""
 
@@ -69,6 +93,7 @@ class ModelAdapter:
         self.normalization: Any = None
         self.torch_batch: Any = None
         self.mode = "simulation fallback"
+        self.model_label = "Persistence + uncertainty simulator"
         self.message = "No checkpoint supplied; using a transparent persistence-based simulator."
         if checkpoint_path is not None:
             self._try_load(config_path, checkpoint_path, normalization_path)
@@ -102,12 +127,15 @@ class ModelAdapter:
             self.model = model
             self.normalization = normalization
             self.torch_batch = torch_batch
-            self.mode = "R3S-MoE checkpoint"
-            self.message = "Loaded the supplied CPU checkpoint and matching normalization metadata."
+            self.mode = "R4S-MoE checkpoint" if int(config["model"].get("routing_top_k", 1)) == 2 and int(config["model"].get("num_experts", 0)) == 4 else "R3S-MoE checkpoint"
+            self.model_label = self.mode.removesuffix(" checkpoint")
+            self.message = f"Loaded the supplied CPU {self.model_label} checkpoint and matching normalization metadata."
         except Exception as error:  # A demo should remain usable if local artifacts are incompatible.
             self.model = None
             self.normalization = None
             self.torch_batch = None
+            self.mode = "simulation fallback"
+            self.model_label = "Persistence + uncertainty simulator"
             self.message = f"Checkpoint could not be loaded ({type(error).__name__}); using simulation fallback."
 
     def predict(
@@ -157,8 +185,17 @@ class ModelAdapter:
             quantiles = (raw * self.normalization.delay_std + self.normalization.delay_mean).tolist()
             assignments = output["router_assignments"].cpu().numpy().tolist()
             probabilities = output["router_probabilities"].cpu().numpy()[0].tolist()
+            topk_indices = output.get("router_topk_assignments")
+            topk_weights = output.get("router_topk_weights")
+            experts = []
+            if topk_indices is not None and topk_weights is not None:
+                indices = topk_indices.cpu().numpy()[0].tolist()
+                weights = topk_weights.cpu().numpy()[0].tolist()
+                experts = [{"id": int(index) + 1, "weight": round(float(weight), 3)} for index, weight in zip(indices, weights)]
             return quantiles, {
                 "expert": int(assignments[0]) + 1,
+                "experts": experts,
+                "topK": len(experts),
                 "probabilities": [round(float(item), 3) for item in probabilities],
             }, elapsed_ms
         except Exception:
@@ -200,7 +237,7 @@ class DemoService:
         if model_result is not None:
             quantiles, router, latency_ms = model_result
             mode = self.adapter.mode
-            model_label = "R3S-MoE"
+            model_label = self.adapter.model_label
         else:
             uncertainty = 18.0 + abs(trend) * 0.22 + loss * 92.0 + stale * 32.0 + outage * 58.0
             uncertainty += quality[4] * 45.0 + quality[5] * 18.0 + quality[6] * 32.0
@@ -219,7 +256,7 @@ class DemoService:
                         median + width * 1.95,
                     ]
                 )
-            router = {"expert": None, "probabilities": []}
+            router = simulated_router(current_delay, trend, quality)
             latency_ms = 0.3
             mode = "simulation fallback"
             model_label = "Persistence + uncertainty simulator"

@@ -29,6 +29,20 @@ function buildQuality(scenario, currentDelay) {
   return [loss, stale, Math.max(stale, outage), declared, inconsistent, duplicate, noFresh];
 }
 
+function simulatedRouter(currentDelay, trend, quality) {
+  const scores = [
+    0.35 + Math.max(0, 1 - quality[0] - quality[1]),
+    0.25 + Math.min(1, Math.abs(currentDelay) / 300) + Math.max(0, trend / 90),
+    0.20 + quality[0] + quality[1] + quality[2],
+    0.20 + Math.max(0, -trend / 60),
+  ];
+  const total = scores.reduce((sum, value) => sum + value, 0);
+  const probabilities = scores.map((value) => value / total);
+  const selected = probabilities.map((value, index) => ({ value, index })).sort((a, b) => b.value - a.value).slice(0, 2);
+  const selectedTotal = selected.reduce((sum, item) => sum + item.value, 0);
+  return { expert: selected[0].index + 1, experts: selected.map((item) => ({ id: item.index + 1, weight: Math.round(item.value / selectedTotal * 1000) / 1000 })), topK: 2, probabilities: probabilities.map((value) => Math.round(value * 1000) / 1000) };
+}
+
 function forecast(payload) {
   const scenario = payload?.scenario || {};
   const currentDelay = clamp(valueOf(scenario.currentDelay, 74), -120, 900);
@@ -82,7 +96,7 @@ function forecast(payload) {
     quantiles,
     medians,
     spreads,
-    router: { expert: null, probabilities: [] },
+    router: simulatedRouter(currentDelay, trend, quality),
     latencyMs: 0.2,
     alert,
     alertText,
@@ -97,6 +111,19 @@ function jsonResponse(value, status = 200) {
       "cache-control": "no-store",
       "access-control-allow-origin": "*",
     },
+  });
+}
+
+function htmlResponse(response) {
+  return response.text().then((html) => {
+    const normalized = html.replace(
+      /<button[^>]*id=["']reset-button["'][^>]*>[\s\S]*?<\/button>/,
+      '<button class="button button-secondary reset-button" id="reset-button" type="button">Reset</button>',
+    );
+    const headers = new Headers(response.headers);
+    headers.set("cache-control", "no-store, no-cache, must-revalidate");
+    headers.set("content-type", "text/html; charset=utf-8");
+    return new Response(normalized, { status: response.status, headers });
   });
 }
 
@@ -115,7 +142,7 @@ export default {
       }
     }
     if (url.pathname === "/" || url.pathname === "/index.html") {
-      return env.ASSETS.fetch(new Request(new URL("/index.html", request.url), request));
+      return htmlResponse(env.ASSETS.fetch(new Request(new URL("/index.html", request.url), request)));
     }
     if (url.pathname.startsWith("/static/")) {
       const assetUrl = new URL(request.url);

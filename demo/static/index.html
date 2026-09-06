@@ -3,132 +3,62 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Interactive RailResilient railway delay forecasting simulation">
-  <title>RailResilient / Operations simulation</title>
+  <meta name="description" content="RailResilient interactive railway forecasting simulation">
+  <title>RailResilient · Simulation</title>
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
   <div class="app-shell">
-    <header class="topbar">
-      <div class="brand-lockup">
-        <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
-        <div>
-          <div class="eyebrow">RAILRESILIENT / LAB</div>
-          <h1>Operations simulation</h1>
-        </div>
-      </div>
-      <div class="topbar-actions">
-        <div class="live-clock"><span class="status-dot"></span><span id="sim-clock">06:42:00</span><span class="muted">SIMULATED</span></div>
-        <button class="button button-quiet" id="step-button" type="button">Step +30s</button>
-        <button class="button button-primary" id="play-button" type="button">Run simulation</button>
-      </div>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="RailResilient simulation home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span><b>RailResilient</b><small>Simulation lab</small></span></a>
+      <div class="header-meta"><span class="connection"><i class="status-dot"></i> Simulated network</span><span class="clock" id="sim-clock">06:42:00</span><button class="button button-secondary" id="step-button" type="button">Step +30s</button><button class="button button-primary" id="play-button" type="button"><span class="play-symbol" aria-hidden="true"></span>Run simulation</button></div>
     </header>
 
-    <main>
-      <section class="hero-strip">
-        <div>
-          <p class="eyebrow blue">CONTROL ROOM / DEMO SCENARIO</p>
-          <h2>See reliability become an operational signal.</h2>
-          <p class="hero-copy">Move trains through a small network, introduce feed problems, and watch the uncertainty-aware forecast respond.</p>
-        </div>
-        <div class="hero-status">
-          <span class="status-pill" id="mode-pill"><span class="status-dot green"></span> Simulation fallback</span>
-          <span class="status-pill subtle">Advisory only · no live railway connection</span>
-        </div>
+    <main id="top" class="workspace">
+      <section class="intro-row">
+        <div><p class="overline">OPERATIONS VIEW <span>/</span> DEMO</p><h1>Understand the forecast before you act.</h1><p class="intro-copy">Move simulated services through a small network, introduce feed problems, and see how forecast confidence changes.</p></div>
+        <div class="mode-status"><span class="status-dot green"></span><span id="mode-pill">Simulation fallback</span><small>Advisory output only</small></div>
       </section>
 
-      <div class="dashboard-grid">
-        <section class="panel map-panel" aria-labelledby="map-title">
-          <div class="panel-header">
-            <div>
-              <p class="eyebrow">NETWORK VIEW</p>
-              <h3 id="map-title">West corridor / live movement</h3>
-            </div>
-            <div class="map-legend"><span><i class="legend-line blue-line"></i>Intercity</span><span><i class="legend-line amber-line"></i>Regional</span><span><i class="legend-train"></i>Train</span></div>
-          </div>
-          <div class="network-canvas">
-            <svg id="network-map" viewBox="0 0 1000 440" role="img" aria-label="Animated simulated railway network">
-              <defs>
-                <linearGradient id="map-glow" x1="0" x2="1"><stop stop-color="#14283a"/><stop offset="1" stop-color="#0b1a2a"/></linearGradient>
-                <filter id="soft-glow"><feGaussianBlur stdDeviation="7" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-              </defs>
-              <rect width="1000" height="440" rx="18" fill="url(#map-glow)"/>
+      <div class="primary-grid">
+        <section class="card network-card" aria-labelledby="network-title">
+          <div class="card-header"><div><p class="overline">NETWORK</p><h2 id="network-title">West corridor</h2></div><div class="legend"><span><i class="legend-swatch intercity"></i>Intercity</span><span><i class="legend-swatch regional"></i>Regional</span><span><i class="legend-train"></i>Service</span></div></div>
+          <div class="network-wrap">
+            <svg id="network-map" viewBox="0 0 1000 440" role="img" aria-label="Simulated railway network with moving services">
+              <defs><linearGradient id="map-fill" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#f8fbfd"/><stop offset="1" stop-color="#eef4f7"/></linearGradient></defs>
+              <rect width="1000" height="440" rx="14" fill="url(#map-fill)"/>
               <g class="map-grid"><path d="M40 75H960M40 220H960M40 365H960M205 35V405M500 35V405M795 35V405"/></g>
-              <g class="track-layer">
-                <path class="track-base" d="M58 112 C190 112 196 72 326 72 S473 136 570 136 S718 76 942 76"/>
-                <path class="track-line blue-line" d="M58 112 C190 112 196 72 326 72 S473 136 570 136 S718 76 942 76"/>
-                <path class="track-base" d="M58 334 C190 334 214 380 342 380 S485 294 590 294 S760 346 942 346"/>
-                <path class="track-line amber-line" d="M58 334 C190 334 214 380 342 380 S485 294 590 294 S760 346 942 346"/>
-                <path class="track-base" d="M326 72 C365 145 385 241 342 380"/>
-                <path class="track-line branch-line" d="M326 72 C365 145 385 241 342 380"/>
-              </g>
-              <g class="station-layer">
-                <g class="station" transform="translate(58 112)"><circle r="7"/><text y="-18">RIVERTON</text></g>
-                <g class="station" transform="translate(326 72)"><circle r="7"/><text y="-18">NORTH JUNCTION</text></g>
-                <g class="station" transform="translate(570 136)"><circle r="7"/><text y="-18">CENTRAL</text></g>
-                <g class="station" transform="translate(942 76)"><circle r="7"/><text y="-18">EAST GATE</text></g>
-                <g class="station" transform="translate(342 380)"><circle r="7"/><text y="27">SOUTH YARD</text></g>
-                <g class="station" transform="translate(590 294)"><circle r="7"/><text y="-18">MARKET</text></g>
-                <g class="station" transform="translate(942 346)"><circle r="7"/><text y="27">LAKESIDE</text></g>
-              </g>
-              <g id="train-layer"></g>
-              <g id="incident-layer"></g>
+              <g class="track-layer"><path class="track-base" d="M58 112 C190 112 196 72 326 72 S473 136 570 136 S718 76 942 76"/><path class="track-line intercity-line" d="M58 112 C190 112 196 72 326 72 S473 136 570 136 S718 76 942 76"/><path class="track-base" d="M58 334 C190 334 214 380 342 380 S485 294 590 294 S760 346 942 346"/><path class="track-line regional-line" d="M58 334 C190 334 214 380 342 380 S485 294 590 294 S760 346 942 346"/><path class="track-base" d="M326 72 C365 145 385 241 342 380"/><path class="track-line branch-line" d="M326 72 C365 145 385 241 342 380"/></g>
+              <g class="station-layer"><g class="station" transform="translate(58 112)"><circle r="6"/><text y="-17">RIVERTON</text></g><g class="station" transform="translate(326 72)"><circle r="6"/><text y="-17">NORTH JUNCTION</text></g><g class="station" transform="translate(570 136)"><circle r="6"/><text y="-17">CENTRAL</text></g><g class="station" transform="translate(942 76)"><circle r="6"/><text y="-17">EAST GATE</text></g><g class="station" transform="translate(342 380)"><circle r="6"/><text y="25">SOUTH YARD</text></g><g class="station" transform="translate(590 294)"><circle r="6"/><text y="-17">MARKET</text></g><g class="station" transform="translate(942 346)"><circle r="6"/><text y="25">LAKESIDE</text></g></g>
+              <g id="train-layer"></g><g id="incident-layer"></g>
             </svg>
-            <div class="map-overlay map-overlay-top"><span class="pulse-ring"></span> 3 services in motion <span class="separator"></span> Click a train for detail</div>
-            <div class="map-overlay map-overlay-bottom"><span class="tiny-label">NETWORK HEALTH</span><strong id="map-health">88%</strong><span class="health-bar"><i id="map-health-bar"></i></span></div>
+            <div class="map-key"><i class="pulse-dot"></i><span>3 services moving</span><span class="key-divider"></span><span>select a service for detail</span></div>
           </div>
-          <div class="map-footer"><div><span class="tiny-label">ACTIVE SCENARIO</span><strong id="active-scenario">Clean feed</strong></div><div><span class="tiny-label">LAST EVENT</span><strong id="last-event">All scheduled movements nominal</strong></div><div class="selected-train" id="selected-train">Select a service to inspect</div></div>
+          <div class="network-footer"><div><span class="label">NETWORK STATUS</span><strong id="map-health">100%</strong><span class="health-track"><i id="map-health-bar"></i></span></div><div class="selected-service" id="selected-train">Select a service on the map</div><div><span class="label">SCENARIO</span><strong id="active-scenario">Clean feed</strong></div></div>
         </section>
 
-        <aside class="panel editor-panel" aria-labelledby="editor-title">
-          <div class="panel-header editor-heading"><div><p class="eyebrow">EDITOR</p><h3 id="editor-title">Scenario controls</h3></div><button class="icon-button" id="reset-button" title="Reset scenario" type="button">↺</button></div>
-          <div class="preset-row" aria-label="Scenario presets">
-            <button class="preset active" data-preset="clean" type="button"><span class="preset-icon calm"></span>Clean</button>
-            <button class="preset" data-preset="loss" type="button"><span class="preset-icon loss"></span>Packet loss</button>
-            <button class="preset" data-preset="stale" type="button"><span class="preset-icon stale"></span>Stale feed</button>
-            <button class="preset" data-preset="outage" type="button"><span class="preset-icon outage"></span>Outage</button>
-            <button class="preset" data-preset="combined" type="button"><span class="preset-icon combined"></span>Combined</button>
-          </div>
-          <div class="control-group">
-            <div class="control-label"><span>Current delay</span><output id="current-delay-value">18 s</output></div>
-            <input id="current-delay" type="range" min="0" max="360" step="1" value="18">
-            <div class="range-hints"><span>on time</span><span>severe</span></div>
-          </div>
-          <div class="control-group">
-            <div class="control-label"><span>Delay trend / event</span><output id="trend-value">+4 s</output></div>
-            <input id="trend" type="range" min="-60" max="90" step="1" value="4">
-            <div class="range-hints"><span>recovering</span><span>worsening</span></div>
-          </div>
-          <div class="control-group compact-control">
-            <div class="control-label"><span>Packet loss</span><output id="packet-loss-value">0%</output></div>
-            <input id="packet-loss" type="range" min="0" max="40" step="1" value="0">
-          </div>
-          <div class="control-group compact-control">
-            <div class="control-label"><span>Feed staleness</span><output id="stale-value">0 min</output></div>
-            <input id="stale" type="range" min="0" max="10" step="1" value="0">
-          </div>
-          <div class="control-group compact-control">
-            <div class="control-label"><span>Outage / blackout</span><output id="outage-value">0 min</output></div>
-            <input id="outage" type="range" min="0" max="15" step="1" value="0">
-          </div>
-          <details class="advanced-controls"><summary>More feed imperfections</summary><div class="control-group compact-control"><div class="control-label"><span>Inconsistent updates</span><output id="inconsistent-value">0%</output></div><input id="inconsistent" type="range" min="0" max="20" value="0"></div><div class="control-group compact-control"><div class="control-label"><span>Duplicate messages</span><output id="duplicate-value">0%</output></div><input id="duplicate" type="range" min="0" max="15" value="0"></div></details>
-          <div class="editor-note"><span class="info-icon">i</span><span>Changes are applied to the next forecast request. This is a simulated feed, not a live railway connection.</span></div>
+        <aside class="card controls-card" aria-labelledby="controls-title">
+          <div class="card-header"><div><p class="overline">SCENARIO EDITOR</p><h2 id="controls-title">Change the feed</h2></div><button class="button button-secondary reset-button" id="reset-button" type="button">Reset</button></div>
+          <p class="card-description">Start with a preset, or tune one condition to see its effect.</p>
+          <fieldset class="preset-list"><legend class="label">QUICK SCENARIOS</legend><div class="preset-grid"><button class="preset active" data-preset="clean" type="button"><i class="preset-dot calm"></i><span>Clean</span><small>baseline</small></button><button class="preset" data-preset="loss" type="button"><i class="preset-dot loss"></i><span>Packet loss</span><small>15% missing</small></button><button class="preset" data-preset="stale" type="button"><i class="preset-dot stale"></i><span>Stale feed</span><small>5 min old</small></button><button class="preset" data-preset="outage" type="button"><i class="preset-dot outage"></i><span>Outage</span><small>15 min dark</small></button><button class="preset" data-preset="combined" type="button"><i class="preset-dot combined"></i><span>Combined</span><small>stress test</small></button></div></fieldset>
+          <div class="control-divider"></div>
+          <div class="control-row"><label for="current-delay">Current delay <output id="current-delay-value">18 s</output></label><input id="current-delay" type="range" min="0" max="360" step="1" value="18"><div class="range-hints"><span>On time</span><span>Severe</span></div></div>
+          <div class="control-row"><label for="trend">Delay trend / event <output id="trend-value">+4 s</output></label><input id="trend" type="range" min="-60" max="90" step="1" value="4"><div class="range-hints"><span>Recovering</span><span>Worsening</span></div></div>
+          <details class="advanced-controls"><summary>More feed conditions</summary><div class="control-row"><label for="packet-loss">Packet loss <output id="packet-loss-value">0%</output></label><input id="packet-loss" type="range" min="0" max="40" step="1" value="0"></div><div class="control-row"><label for="stale">Feed staleness <output id="stale-value">0 min</output></label><input id="stale" type="range" min="0" max="10" step="1" value="0"></div><div class="control-row"><label for="outage">Outage / blackout <output id="outage-value">0 min</output></label><input id="outage" type="range" min="0" max="15" step="1" value="0"></div><div class="control-row"><label for="inconsistent">Inconsistent updates <output id="inconsistent-value">0%</output></label><input id="inconsistent" type="range" min="0" max="20" value="0"></div><div class="control-row"><label for="duplicate">Duplicate updates <output id="duplicate-value">0%</output></label><input id="duplicate" type="range" min="0" max="15" value="0"></div></details>
+          <div class="control-note"><span class="info-mark">i</span><span>These controls change a simulated feed. No live railway data is connected.</span></div>
         </aside>
       </div>
 
-      <section class="kpi-grid" aria-label="Simulation metrics">
-        <article class="metric-card"><div class="metric-icon blue-icon">◌</div><div><span class="metric-label">Forecast confidence</span><strong id="confidence-value">88.0<span>%</span></strong><small id="confidence-caption">High · feed is fresh</small></div><div class="metric-spark blue-spark"></div></article>
-        <article class="metric-card"><div class="metric-icon violet-icon">≈</div><div><span class="metric-label">Next-event median</span><strong id="median-value">22<span>s</span></strong><small id="median-caption">+4 s trend / event</small></div><div class="metric-spark violet-spark"></div></article>
-        <article class="metric-card"><div class="metric-icon amber-icon">⌁</div><div><span class="metric-label">Uncertainty width</span><strong id="spread-value">74<span>s</span></strong><small id="spread-caption">90% forecast interval</small></div><div class="metric-spark amber-spark"></div></article>
-        <article class="metric-card alert-card"><div class="metric-icon coral-icon">!</div><div><span class="metric-label">Operational signal</span><strong id="signal-value">Nominal</strong><small id="signal-caption">No immediate reliability alert</small></div><div class="signal-indicator" id="signal-indicator"></div></article>
-      </section>
+      <section class="summary-grid" aria-label="Forecast summary"><article class="metric-card"><span class="metric-icon confidence-icon">◎</span><div><span class="metric-label">Forecast confidence</span><strong id="confidence-value">100<span>%</span></strong><small id="confidence-caption">High · feed is fresh</small></div></article><article class="metric-card"><span class="metric-icon median-icon">↗</span><div><span class="metric-label">Next-event median</span><strong id="median-value">22<span>s</span></strong><small id="median-caption">+4 s trend / event</small></div></article><article class="metric-card"><span class="metric-icon interval-icon">↔</span><div><span class="metric-label">90% interval width</span><strong id="spread-value">74<span>s</span></strong><small>Uncertainty, not a promise</small></div></article><article class="metric-card signal-card"><span class="metric-icon signal-icon">!</span><div><span class="metric-label">Operational signal</span><strong id="signal-value">Nominal</strong><small id="signal-caption">No immediate reliability alert.</small></div><i class="signal-indicator" id="signal-indicator"></i></article></section>
 
-      <div class="lower-grid">
-        <section class="panel forecast-panel" aria-labelledby="forecast-title"><div class="panel-header"><div><p class="eyebrow">PROBABILISTIC OUTPUT</p><h3 id="forecast-title">Next four events</h3></div><div class="chart-legend"><span><i class="legend-box"></i>90% interval</span><span><i class="legend-dot"></i>median</span></div></div><div class="chart-wrap"><svg id="forecast-chart" viewBox="0 0 720 270" role="img" aria-label="Forecast uncertainty chart"></svg></div><div class="forecast-footer"><span>Lower is better for delay</span><span id="forecast-model">Persistence + uncertainty simulator</span></div></section>
-        <section class="panel quality-panel" aria-labelledby="quality-title"><div class="panel-header"><div><p class="eyebrow">RELIABILITY CHANNELS</p><h3 id="quality-title">Feed quality vector</h3></div><span class="score-badge" id="quality-score">88 / 100</span></div><div id="quality-list" class="quality-list"></div><div class="quality-summary" id="quality-summary">Fresh observations are available across the corridor.</div></section>
-        <section class="panel log-panel" aria-labelledby="log-title"><div class="panel-header"><div><p class="eyebrow">EVENT STREAM</p><h3 id="log-title">Simulation log</h3></div><button class="text-button" id="clear-log" type="button">Clear</button></div><div id="event-log" class="event-log"></div></section>
+      <div class="analysis-grid">
+        <section class="card forecast-card" aria-labelledby="forecast-title"><div class="card-header"><div><p class="overline">FORECAST</p><h2 id="forecast-title">Next four events</h2></div><div class="chart-legend"><span><i class="legend-range"></i>range</span><span><i class="legend-median"></i>median</span></div></div><p class="card-description">The band widens when observations become less reliable.</p><div class="chart-wrap"><svg id="forecast-chart" viewBox="0 0 720 270" role="img" aria-label="Forecast uncertainty chart"></svg></div><div class="card-foot"><span>Delay in seconds · lower is better</span><strong id="forecast-model">Persistence + uncertainty simulator</strong></div></section>
+        <section class="card quality-card" aria-labelledby="quality-title"><div class="card-header"><div><p class="overline">RELIABILITY</p><h2 id="quality-title">Feed quality</h2></div><span class="score-badge" id="quality-score">100 / 100</span></div><p class="card-description">The model sees these signals alongside the train history.</p><div id="quality-list" class="quality-list"></div><p class="quality-summary" id="quality-summary">Fresh observations are available across the corridor.</p></section>
+        <section class="card routing-card" aria-labelledby="routing-title"><div class="card-header"><div><p class="overline">MODEL TRACE</p><h2 id="routing-title">Expert routing</h2></div><span class="routing-badge" id="routing-badge">fallback</span></div><p class="card-description">R4S-MoE uses a shared path plus the two most relevant specialist adapters.</p><div id="expert-list" class="expert-list"><div class="empty-routing">Routing appears when a trained checkpoint is loaded.</div></div><p class="quality-summary" id="routing-summary">The public preview uses a deterministic fallback.</p></section>
       </div>
-      <footer class="disclaimer"><span class="status-dot amber"></span><strong>Research prototype.</strong> Simulation outputs are advisory and must not be used for train control, signaling, dispatch automation, or safety-critical decisions. <a href="https://github.com/bala2006/railresilient-forecasting" target="_blank" rel="noreferrer">View project ↗</a></footer>
+
+      <section class="card log-card" aria-labelledby="log-title"><div class="card-header"><div><p class="overline">EVENTS</p><h2 id="log-title">Simulation log</h2></div><button class="text-button" id="clear-log" type="button">Clear log</button></div><div id="event-log" class="event-log" aria-live="polite"></div></section>
+      <footer class="disclaimer"><i class="status-dot amber"></i><span><strong>Research prototype.</strong> Advisory simulation only — never use for train control, signaling, dispatch automation, or safety-critical decisions.</span><a href="https://github.com/bala2006/railresilient-forecasting" target="_blank" rel="noreferrer">Project on GitHub ↗</a></footer>
     </main>
   </div>
   <script type="module" src="/static/app.js"></script>

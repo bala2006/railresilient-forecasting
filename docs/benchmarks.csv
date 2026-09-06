@@ -7,3 +7,5 @@ R2S-no-quality,v3 reference,online,48.24,30.62,,,20260908
 R3S-MoE,v3,online,45.17,28.72,0.0227,47582,20260908
 Dense,v2 aggregate,online,,30.06,,,20260906+20260907
 R2S-MoE,v2 aggregate,online,,30.76,,,20260906+20260907
+
+R4S-MoE,v4-top2,online,45.44,28.87,0.0229,48367,20260908; 4 adapters + shared, top-2

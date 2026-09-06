@@ -12,15 +12,16 @@ uv run python demo/server.py
 
 Then open <http://127.0.0.1:8765>.
 
-The clean checkout uses a deterministic **simulation fallback** so the demo does not require private data or a checkpoint. To use a compatible trained R3S-MoE checkpoint, supply the checkpoint and the matching normalization metadata:
+The clean checkout uses a deterministic **simulation fallback** so the demo does not require private data or a checkpoint. To use a compatible trained checkpoint, supply the checkpoint and matching normalization metadata:
 
 ```bash
 uv run python demo/server.py \
+  --config configs/pilot_v4_r4s_top2_seed20260908.json \
   --checkpoint artifacts/<run>/checkpoints/r3s_moe.pt \
   --normalization artifacts/<run>/normalization.json
 ```
 
-The checkpoint must match `configs/pilot_v3_seed20260908.json`. The UI will identify whether it is using R3S-MoE or the fallback simulator.
+The v4 checkpoint must be trained from `configs/pilot_v4_r4s_top2_seed20260908.json`; older three-expert/top-1 checkpoints are intentionally not treated as compatible. The UI identifies whether it is using R4S-MoE or the fallback simulator.
 
 ## Temporary public preview
 

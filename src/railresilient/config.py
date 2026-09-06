@@ -108,6 +108,9 @@ def validate_config(config: dict[str, Any]) -> None:
         raise ConfigError(f"model.quantiles must equal {expected_quantiles}")
     if any(model[key] < 1 for key in ("hidden_dim", "num_experts", "epochs", "batch_size")):
         raise ConfigError("Model dimensions, epochs, experts, and batch size must be positive")
+    routing_top_k = int(model.get("routing_top_k", 1))
+    if not 1 <= routing_top_k <= int(model["num_experts"]):
+        raise ConfigError("model.routing_top_k must be between 1 and model.num_experts")
     if not 0.0 <= model["dropout"] < 1.0 or model["learning_rate"] <= 0.0:
         raise ConfigError("dropout or learning_rate is outside its valid range")
     if model.get("dense_trunk_width", 0) < 1:

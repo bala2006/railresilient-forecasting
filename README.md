@@ -6,13 +6,13 @@ RailResilient asks a practical question:
 
 > Can a small forecasting model remain useful when railway observations are missing, delayed, stale, or corrupted?
 
-It predicts delay distributions for the next four train events and compares a new candidate, **R3S-MoE**, with persistence, Ridge, GRU, dense, and earlier R2S-MoE models.
+It predicts delay distributions for the next four train events. The repository contains historical v3 results for **R3S-MoE** and a new v4 architecture candidate, **R4S-MoE**, for the next retraining run.
 
 > **Important:** This is an open research prototype, not train control, dispatching, signaling, safety certification, Japanese validation, or passenger-outcome prediction.
 
 ## Key result
 
-The single-seed v3 experiment found that R3S-MoE was the strongest model in this run:
+The table below is the historical **single-seed v3 top-1 result**. It is not a result for the new R4S-MoE design:
 
 | Model | Clean MAE | Clean WIS | Parameters |
 |---|---:|---:|---:|
@@ -21,20 +21,35 @@ The single-seed v3 experiment found that R3S-MoE was the strongest model in this
 | R2S-MoE v2 | 48.30 s | 30.41 | 52,254 |
 | **R3S-MoE v3** | **45.17 s** | **28.72** | **47,582** |
 
-Lower is better. R3S-MoE also achieved a clean severe-delay Brier score of **0.0227**, compared with **0.0419** for the point-only persistence alert.
+Lower is better. The historical R3S-MoE run also achieved a clean severe-delay Brier score of **0.0227**, compared with **0.0419** for the point-only persistence alert.
 
-This is promising **single-seed evidence**, not proof of superiority. Two more v3 seeds and official benchmark validation are still needed.
+This is promising **single-seed evidence**, not proof of superiority. The new four-expert/top-2 R4S-MoE candidate must be retrained across more seeds and official benchmark protocols before it can be treated as a replacement.
+
+### First R4S-MoE v4 run
+
+The first matching v4 run used the same selected RIDE Silver protocol. It is a candidate result, not a final claim:
+
+| Model | Clean MAE | Clean online WIS | Parameters | CPU p95 |
+|---|---:|---:|---:|---:|
+| Historical R3S-MoE v3 · top-1 | 45.17 s | 28.72 | 47,582 | 9.98 ms |
+| **R4S-MoE v4 · top-2** | **45.44 s** | **28.87** | **48,367** | **12.11 ms** |
+
+R4S-MoE was competitive but slightly worse and slower in this one seed. Its value now is a testable mixed-regime routing hypothesis, not a demonstrated improvement. See [`docs/r4s-top2-design.md`](docs/r4s-top2-design.md) for the stress results and evaluation gate.
 
 ## How the model works
 
-![R3S-MoE architecture](docs/architecture-diagram.png)
+![R4S-MoE architecture](docs/architecture-r4s.svg)
 
 1. **Observed history:** eight causally available train events.
 2. **Reliability signals:** missingness, staleness, observation age, declared delay, duplicates, inconsistencies, and no-fresh-observation state.
 3. **Dual encoder:** local event mixing plus quality-conditioned selective state memory.
-4. **Shared + routed residual experts:** a common dynamics path plus small top-1 routed adapters.
+4. **Shared + routed residual experts:** one always-on shared path plus four low-rank specialists; the router selects the two most relevant specialists and renormalizes their weights.
 5. **Reliability gate:** reduces specialist overreaction when feeds are unreliable.
 6. **Forecast head:** persistence-anchored monotonic quantiles for the next four events.
+
+### R4S-MoE status
+
+R4S-MoE is the proposed v4 architecture, not a completed benchmark result yet. It keeps the successful v3 ingredients—bounded quality channels, mask-gated state, residual adapters, sparse CPU inference, calibration, and a persistence anchor—while changing the routed path from **3 experts/top-1** to **4 experts/top-2**. The extra selected specialist can represent a mixed regime such as shock plus stale feed without forcing a single brittle choice. Retraining, multi-seed evaluation, calibration checks, and latency measurement are required before claiming it improves on v3.
 
 The design uses ideas inspired by time-series state-space models, sparse MoE models, residual adapters, and probabilistic forecasting. Large-LLM mechanisms such as FP8, distributed routing, RL, and long-context attention are intentionally not used because this is a small CPU railway model.
 
@@ -106,7 +121,7 @@ uv run python demo/server.py
 # open http://127.0.0.1:8765
 ```
 
-The demo works in a clean checkout with a deterministic simulation fallback. If a compatible `r3s_moe.pt` checkpoint and matching `normalization.json` are supplied, the same API loads R3S-MoE on CPU. See [`demo/README.md`](demo/README.md) for details.
+The demo works in a clean checkout with a deterministic simulation fallback. If a compatible `r3s_moe.pt` checkpoint and matching `normalization.json` are supplied, the same API loads the trained model on CPU. For the new architecture, use `configs/pilot_v4_r4s_top2_seed20260908.json` and a newly trained `r3s_moe.pt`; it expects four routed adapters and top-2 routing. See [`demo/README.md`](demo/README.md) and [`docs/r4s-top2-design.md`](docs/r4s-top2-design.md) for details.
 
 The repository does **not** commit raw data, processed arrays, model checkpoints, or prediction bundles. The data downloader recreates the public inputs, and the compact benchmark summaries are included in `docs/`.
 
