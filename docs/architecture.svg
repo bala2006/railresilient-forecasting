@@ -23,7 +23,6 @@
   <text x="457" y="247" text-anchor="middle" class="small">Local event mixing</text>
   <text x="457" y="274" text-anchor="middle" class="small">Quality-conditioned state</text>
   <text x="457" y="301" text-anchor="middle" class="small">Mask-gated memory</text>
-  <path d="M580 260 L665 260" class="arrow"/>
   <rect x="665" y="95" width="220" height="120" class="box" fill="#ede9fe"/>
   <text x="775" y="132" text-anchor="middle" class="label">Shared expert</text>
   <text x="775" y="166" text-anchor="middle" class="small">Common delay dynamics</text>
