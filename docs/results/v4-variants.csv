@@ -1,0 +1,7 @@
+variant,experts,routing,training,clean_mae_seconds,clean_wis,severe_brier,coverage90_percent,cpu_p95_ms,packet_loss_wis,stale_feed_wis,outage_wis,combined_wis,seed_scope
+supervised_top1,4,top-1,supervised_quantile_balance,45.192,28.774,0.02275,89.86,10.36,28.965,29.909,33.729,31.277,20260908
+rl_router_top2,4,top-2,supervised_pretrain_router_only_offline_reinforce,45.337,28.824,0.02277,89.81,7.50,29.045,30.039,33.653,31.247,20260908
+rl_end_to_end_top2,4,top-2,supervised_pretrain_end_to_end_offline_reinforce,45.191,28.705,0.02269,89.80,7.05,28.881,29.363,33.254,30.901,20260908
+supervised_top2_no_balance,4,top-2,supervised_quantile_balance_0,45.364,28.849,0.02293,89.81,8.41,29.063,30.002,33.641,31.209,20260908
+supervised_top2_strong_balance,4,top-2,supervised_quantile_balance_0.05,45.267,28.763,0.02283,89.82,9.63,28.967,30.000,33.549,31.155,20260908
+earlier_v4_control,4,top-2,supervised_quantile_balance_0.01,45.440,28.874,0.02289,89.84,12.11,29.070,30.000,33.640,31.220,20260908

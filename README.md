@@ -6,9 +6,16 @@ RailResilient asks a practical question:
 
 > Can a small forecasting model remain useful when railway observations are missing, delayed, stale, or corrupted?
 
-It predicts delay distributions for the next four train events. The repository contains historical v3 results for **R3S-MoE** and a new v4 architecture candidate, **R4S-MoE**, for the next retraining run.
+It predicts delay distributions for the next four train events. The repository contains historical v1/v2/v3 baselines, the R4S-MoE four-expert/top-2 candidate, and a five-variant v4 benchmark with clear evidence boundaries.
 
 > **Important:** This is an open research prototype, not train control, dispatching, signaling, safety certification, Japanese validation, or passenger-outcome prediction.
+
+## Start here
+
+- **[Documentation hub](docs/README.md)** — recommended reading order, model history, figures, and evidence labels.
+- **[Project overview](docs/overview.md)** — the problem, data, protocol, and claim boundaries in plain language.
+- **[Benchmark summary](docs/benchmark-summary.md)** — the main tables and current v4 graphs.
+- **[Findings and decisions](docs/findings.md)** — what worked, what did not, and the next experiments.
 
 ## Key result
 
@@ -55,15 +62,18 @@ The design uses ideas inspired by time-series state-space models, sparse MoE mod
 
 ## Key graphs
 
-### Clean probabilistic benchmark
+The current, easy-to-read v4 figures are collected in the [benchmark summary](docs/benchmark-summary.md):
 
-![Clean WIS comparison](docs/clean-wis.svg)
+![Fresh v4 clean benchmark](docs/v4-clean-benchmark.svg)
 
-### Feed-corruption robustness
+![Fresh v4 stress benchmark](docs/v4-stress-benchmark.svg)
 
-![Stress degradation comparison](docs/stress-robustness.svg)
+Historical figures remain available for context:
 
-R3S-MoE degradation from its own clean WIS was **0.84%** under 15% packet loss, **3.98%** under five-minute staleness, **16.96%** under a 15-minute outage, and **8.63%** under combined corruption.
+- [Historical clean WIS comparison](docs/clean-wis.svg)
+- [Historical v2/v3 stress robustness](docs/stress-robustness.svg)
+- [Full model architecture family](docs/architecture-family.svg)
+- [Chronological experiment flow](docs/experiment-flow.svg)
 
 ## Experiment protocol
 
@@ -105,9 +115,9 @@ For a fast check, use `configs/smoke.json`. See `railresilient --help` for indiv
 ## Repository map
 
 ```text
-src/railresilient/       Data, corruption, models, calibration, metrics, CLI
+src/railresilient/       Data, corruption, models, calibration, metrics, CLI, offline contextual-bandit stage
 configs/                  Reproducible experiment configurations
-docs/                     Architecture, graphs, benchmark tables, v1/v2/v3 analysis
+docs/                     Documentation hub, architecture diagrams, graphs, benchmark tables, history
 research_prd.md           Full research plan, assumptions, and acceptance criteria
 data/manifests/           Pinned download and prepared-data manifests
 artifacts/                Ignored local outputs from training runs
@@ -127,7 +137,9 @@ The repository does **not** commit raw data, processed arrays, model checkpoints
 
 ## Limitations
 
-- R3S-MoE results currently use one substantive v3 seed.
+- R3S-MoE and all fresh v4 variants currently use one substantive seed.
+- The best v4 row is one-seed exploratory evidence after trying multiple variants; it is not proof that RL or R4S-MoE is superior.
+- The v4 RL experiments are offline one-step contextual-bandit experiments, not sequential railway-control RL.
 - Evidence uses selected RIDE Silver months, not official RIDE Gold.
 - Feed corruption is simulated because receipt-time feed histories are unavailable.
 - No Japanese ODPT history or passenger transfer labels were available.
@@ -140,8 +152,15 @@ Released under the **MIT License**. Contributions, replication reports, alternat
 
 ## Citation and project documents
 
+- [Documentation hub](docs/README.md)
+- [Project overview](docs/overview.md)
+- [Model architectures](docs/model-architectures.md)
+- [Benchmark summary](docs/benchmark-summary.md)
+- [Findings and decisions](docs/findings.md)
 - [V3 design research](docs/v3-design-research.md)
 - [Easy v1/v2/v3 comparison](docs/v3-comparison.md)
+- [R4S-MoE top-2 design](docs/r4s-top2-design.md)
+- [R4S-MoE five-variant benchmark](docs/r4s-variant-benchmark.md)
 - [Compact benchmark CSV](docs/benchmarks.csv)
 - [Research PRD](research_prd.md)
 - [RIDE Silver dataset](https://huggingface.co/datasets/orailix/ride-silver)

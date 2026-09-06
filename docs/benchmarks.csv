@@ -1,11 +1,15 @@
-model,version,mode,clean_mae_seconds,clean_wis,severe_delay_brier,parameters,seed_scope
-persistence,reference,static,48.62,31.82,0.0419,,all runs
-GRU,v3,online,49.12,30.98,,,20260908
-Dense,v3,online,47.19,30.09,,,20260908
-R2S-MoE,v3 reference,online,48.30,30.41,0.0238,52254,20260908
-R2S-no-quality,v3 reference,online,48.24,30.62,,,20260908
-R3S-MoE,v3,online,45.17,28.72,0.0227,47582,20260908
-Dense,v2 aggregate,online,,30.06,,,20260906+20260907
-R2S-MoE,v2 aggregate,online,,30.76,,,20260906+20260907
-
-R4S-MoE,v4-top2,online,45.44,28.87,0.0229,48367,20260908; 4 adapters + shared, top-2
+model,version,mode,clean_mae_seconds,clean_wis,severe_delay_brier,parameters,seed_scope,notes
+persistence,reference,static,48.62,31.82,0.0419,,all runs,strong operational baseline
+GRU,v3,online,49.12,30.98,,,20260908,compact temporal baseline
+Dense,v3,online,47.19,30.09,,,20260908,neural reference
+R2S-MoE,v3 reference,online,48.30,30.41,0.0238,52254,20260908,historical reliability/routing reference
+R2S-no-quality,v3 reference,online,48.24,30.62,,,20260908,historical ablation
+R3S-MoE,v3,online,45.17,28.72,0.0227,47582,20260908,one-seed historical control; top-1
+Dense,v2 aggregate,online,,30.06,,,20260906+20260907,two-seed aggregate
+R2S-MoE,v2 aggregate,online,,30.76,,,20260906+20260907,two-seed aggregate
+R4S-MoE control,v4-top2,online,45.440,28.874,0.02289,48367,20260908,one-seed exploratory; 4 experts + shared, top-2
+R4S-MoE supervised top-1,v4-variants,online,45.192,28.774,0.02275,48367,20260908,one-seed exploratory
+R4S-MoE RL router,v4-variants,online,45.337,28.824,0.02277,48367,20260908,one-seed offline contextual-bandit; router-only
+R4S-MoE RL end-to-end,v4-variants,online,45.191,28.705,0.02269,48367,20260908,one-seed offline contextual-bandit; exploratory lead
+R4S-MoE no balance,v4-variants,online,45.364,28.849,0.02293,48367,20260908,one-seed exploratory; balance weight 0
+R4S-MoE strong balance,v4-variants,online,45.267,28.763,0.02283,48367,20260908,one-seed exploratory; balance weight 0.05

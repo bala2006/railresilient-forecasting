@@ -1,0 +1,8 @@
+stage,model,routing,clean_mae_seconds,clean_wis,parameters,seed_scope,evidence_status
+v1,Persistence,none,48.62,31.82,,all runs,historical baseline
+v1,Dense,none,47.19,30.09,52291,20260908,historical v3 reference
+v2,R2S-MoE,top-1,48.30,30.41,52254,20260908,historical reference
+v2,R2S-MoE,top-1,,,52254,20260906+20260907,two-seed aggregate WIS 30.76 ± 0.42
+v3,R3S-MoE,top-1,45.17,28.72,47582,20260908,one-seed historical control
+v4,R4S-MoE control,top-2,45.440,28.874,48367,20260908,one-seed exploratory control
+v4,R4S-MoE end-to-end offline contextual bandit,top-2,45.191,28.705,48367,20260908,one-seed exploratory lead
