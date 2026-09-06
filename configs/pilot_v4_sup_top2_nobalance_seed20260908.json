@@ -1,0 +1,10 @@
+{
+  "seed": 20260908,
+  "data": {"source": "orailix/ride-silver", "release_revision": "bfecc4ad665d59fd2acf3e1f37beba2a7f94ff74", "context_events": 8, "future_events": 4, "station_buckets": 256, "train_months": ["202301", "202302", "202303", "202304"], "validation_months": ["202401", "202402"], "test_months": ["202501", "202502"], "max_train_samples": 80000, "max_validation_samples": 20000, "max_test_samples": 30000, "severe_delay_seconds": 300.0, "shock_trend_seconds": 90.0, "recovery_trend_seconds": -60.0},
+  "model": {"hidden_dim": 48, "station_embedding_dim": 8, "event_embedding_dim": 4, "expert_multiplier": 2, "num_experts": 4, "routing_top_k": 2, "r3s_adapter_rank": 8, "r3s_horizon_embedding_dim": 12, "quantiles": [0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95], "dropout": 0.05, "epochs": 8, "batch_size": 512, "learning_rate": 0.001, "weight_decay": 0.0001, "patience": 2, "balance_weight": 0.0, "huber_weight": 0.1, "dense_trunk_width": 368, "num_workers": 0},
+  "calibration": {"window": 1000, "min_samples": 100, "online_update_stride": 25},
+  "evaluation": {"inference_batch_size": 512, "warmup_batches": 5, "timing_batches": 50, "alert_fraction": 0.1, "bootstrap_replicates": 200, "transfer_buffer_seconds": 300.0},
+  "training_corruption": {"max_loss_rate": 0.30, "max_stale_minutes": 8.0, "max_outage_minutes": 12.0, "max_outage_rate": 0.25, "max_inconsistent_rate": 0.10, "max_duplicate_rate": 0.05, "max_blackout_rate": 0.10},
+  "scenarios": [{"name": "clean", "type": "clean"}, {"name": "loss_15", "type": "packet_loss", "rate": 0.15}, {"name": "stale_5m", "type": "stale", "minutes": 5}, {"name": "outage_15m", "type": "outage", "minutes": 15, "rate": 0.2}, {"name": "combined", "type": "combined", "rate": 0.15, "minutes": 10}],
+  "experiment": {"models": ["r3s_moe"], "variant": "supervised_4_experts_top2_no_balance", "runtime": {"torch_threads": 2}}
+}

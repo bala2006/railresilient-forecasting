@@ -592,7 +592,11 @@ class R3SMoE(nn.Module):
             horizon_embedding_dim,
         )
 
-    def forward(self, batch: dict[str, torch.Tensor]) -> dict[str, torch.Tensor]:
+    def forward(
+        self,
+        batch: dict[str, torch.Tensor],
+        route_indices: torch.Tensor | None = None,
+    ) -> dict[str, torch.Tensor]:
         quality = batch["quality"]
         encoded = self.encoder(batch)
         current = R3SEncoder.last_valid_value(batch["past_delay"], batch["mask"])
@@ -603,9 +607,17 @@ class R3SMoE(nn.Module):
         regime_features = torch.stack([current, trend, shock - recovery], dim=-1)
         logits = self.router(torch.cat([encoded, regime_features, quality], dim=-1))
         probabilities = torch.softmax(logits, dim=-1)
-        top_weights, top_indices = torch.topk(
-            probabilities, k=self.routing_top_k, dim=-1
-        )
+        if route_indices is None:
+            top_weights, top_indices = torch.topk(
+                probabilities, k=self.routing_top_k, dim=-1
+            )
+        else:
+            if route_indices.ndim != 2 or route_indices.shape[0] != encoded.shape[0]:
+                raise ValueError("route_indices must have shape (batch, top_k)")
+            if route_indices.shape[1] != self.routing_top_k:
+                raise ValueError("route_indices width must equal model.routing_top_k")
+            top_indices = route_indices.to(device=probabilities.device, dtype=torch.long)
+            top_weights = torch.gather(probabilities, 1, top_indices)
         top_weights = top_weights / top_weights.sum(dim=-1, keepdim=True).clamp_min(1e-8)
         assignments = top_indices[:, 0]
         if self.training:

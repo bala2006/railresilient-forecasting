@@ -57,11 +57,12 @@ def _stable_offset(name: str, modulus: int = 100_000) -> int:
     return int.from_bytes(digest[:8], "big") % modulus
 
 
-def set_seed(seed: int) -> None:
+def set_seed(seed: int, torch_threads: int | None = None) -> None:
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
-    torch.set_num_threads(min(8, os.cpu_count() or 1))
+    thread_count = torch_threads or min(8, os.cpu_count() or 1)
+    torch.set_num_threads(max(1, int(thread_count)))
     try:
         torch.use_deterministic_algorithms(True)
     except (AttributeError, RuntimeError):
@@ -307,7 +308,10 @@ def run_experiments(
     artifact_root: str | Path = "artifacts",
     run_name: str | None = None,
 ) -> Path:
-    set_seed(config["seed"])
+    set_seed(
+        config["seed"],
+        config.get("experiment", {}).get("runtime", {}).get("torch_threads"),
+    )
     run_name = run_name or time.strftime("pilot-%Y%m%d-%H%M%S", time.gmtime())
     run_dir = Path(artifact_root) / run_name
     if (run_dir / "results.json").exists():
@@ -360,12 +364,21 @@ def run_experiments(
     )
 
     quantiles = config["model"]["quantiles"]
-    model_objects: dict[str, nn.Module] = {
+    requested_models = config.get("experiment", {}).get("models")
+    if requested_models is None:
+        requested_models = ["dense", "gru", "r2s_moe", "r2s_no_quality", "r3s_moe"]
+    available_models: dict[str, nn.Module] = {
         "dense": DenseForecaster(config, include_quality=True),
         "gru": GRUForecaster(config),
         "r2s_moe": R2SMoE(config, include_quality=True),
         "r2s_no_quality": R2SMoE(config, include_quality=False),
         "r3s_moe": R3SMoE(config),
+    }
+    unknown_models = sorted(set(requested_models) - set(available_models))
+    if unknown_models:
+        raise ValueError(f"Unknown experiment models: {unknown_models}")
+    model_objects: dict[str, nn.Module] = {
+        name: available_models[name] for name in requested_models
     }
     training_summaries: dict[str, Any] = {}
     for model_name, model in model_objects.items():
@@ -384,6 +397,20 @@ def run_experiments(
             config,
             checkpoint_dir / f"{model_name}.pt",
         )
+        rl_config = config.get("experiment", {}).get("rl", {})
+        if model_name == "r3s_moe" and rl_config.get("enabled", False):
+            from railresilient.rl import train_contextual_bandit
+
+            training_summaries[model_name]["rl_stage"] = train_contextual_bandit(
+                model,
+                model_train,
+                model_quality,
+                clean_selection.data,
+                clean_selection.quality,
+                normalization,
+                config,
+                checkpoint_dir / f"{model_name}.pt",
+            )
 
     ridge = QuantileRidge(quantiles, include_quality=True)
     ridge.fit(
@@ -688,24 +715,27 @@ def run_experiments(
         }
         results["scenarios"][scenario_name] = scenario_results
 
-        r2s_loss = weighted_interval_score_values(
-            test.target_delay, online_predictions["r2s_moe"], quantiles
-        ).mean(axis=1)
-        no_quality_loss = weighted_interval_score_values(
-            test.target_delay, online_predictions["r2s_no_quality"], quantiles
-        ).mean(axis=1)
-        scenario_statistics: dict[str, Any] = {
-            "r2s_moe_vs_no_quality_wis": paired_day_bootstrap(
+        scenario_statistics: dict[str, Any] = {}
+        if "r2s_moe" in online_predictions and "r2s_no_quality" in online_predictions:
+            r2s_loss = weighted_interval_score_values(
+                test.target_delay, online_predictions["r2s_moe"], quantiles
+            ).mean(axis=1)
+            no_quality_loss = weighted_interval_score_values(
+                test.target_delay, online_predictions["r2s_no_quality"], quantiles
+            ).mean(axis=1)
+            scenario_statistics["r2s_moe_vs_no_quality_wis"] = paired_day_bootstrap(
                 test.day_ordinal,
                 no_quality_loss,
                 r2s_loss,
                 config["evaluation"]["bootstrap_replicates"],
                 config["seed"] + _stable_offset(f"bootstrap-{scenario_name}-quality"),
             )
-        }
-        if scenario["type"] == "clean":
+        if scenario["type"] == "clean" and "dense" in online_predictions and "r2s_moe" in online_predictions:
             dense_loss = weighted_interval_score_values(
                 test.target_delay, online_predictions["dense"], quantiles
+            ).mean(axis=1)
+            r2s_loss = weighted_interval_score_values(
+                test.target_delay, online_predictions["r2s_moe"], quantiles
             ).mean(axis=1)
             scenario_statistics["r2s_moe_vs_dense_wis"] = paired_day_bootstrap(
                 test.day_ordinal,

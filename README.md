@@ -34,7 +34,7 @@ The first matching v4 run used the same selected RIDE Silver protocol. It is a c
 | Historical R3S-MoE v3 · top-1 | 45.17 s | 28.72 | 47,582 | 9.98 ms |
 | **R4S-MoE v4 · top-2** | **45.44 s** | **28.87** | **48,367** | **12.11 ms** |
 
-R4S-MoE was competitive but slightly worse and slower in this one seed. Its value now is a testable mixed-regime routing hypothesis, not a demonstrated improvement. See [`docs/r4s-top2-design.md`](docs/r4s-top2-design.md) for the stress results and evaluation gate.
+R4S-MoE was competitive but slightly worse and slower in this one seed. Its value now is a testable mixed-regime routing hypothesis, not a demonstrated improvement. See [`docs/r4s-top2-design.md`](docs/r4s-top2-design.md) for the design gate and [`docs/r4s-variant-benchmark.md`](docs/r4s-variant-benchmark.md) for the five-variant supervised and offline contextual-bandit comparison.
 
 ## How the model works
 
@@ -51,7 +51,7 @@ R4S-MoE was competitive but slightly worse and slower in this one seed. Its valu
 
 R4S-MoE is the proposed v4 architecture, not a completed benchmark result yet. It keeps the successful v3 ingredients—bounded quality channels, mask-gated state, residual adapters, sparse CPU inference, calibration, and a persistence anchor—while changing the routed path from **3 experts/top-1** to **4 experts/top-2**. The extra selected specialist can represent a mixed regime such as shock plus stale feed without forcing a single brittle choice. Retraining, multi-seed evaluation, calibration checks, and latency measurement are required before claiming it improves on v3.
 
-The design uses ideas inspired by time-series state-space models, sparse MoE models, residual adapters, and probabilistic forecasting. Large-LLM mechanisms such as FP8, distributed routing, RL, and long-context attention are intentionally not used because this is a small CPU railway model.
+The design uses ideas inspired by time-series state-space models, sparse MoE models, residual adapters, and probabilistic forecasting. Large-LLM mechanisms such as FP8, distributed routing, and long-context attention are intentionally not used because this is a small CPU railway model. The exploratory RL variants use only an offline one-step contextual-bandit objective; no sequential railway-control RL is claimed.
 
 ## Key graphs
 

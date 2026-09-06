@@ -34,9 +34,7 @@ def write_reports(run_dir: str | Path, dataset_manifest: str | Path) -> None:
         "",
         "## Models",
         "",
-        f"The run compares zero-delay, persistence, autoregressive ridge, compact GRU, a dense comparator, R2S-MoE, an R2S no-quality ablation, and the R3S-MoE v3 candidate when present. The dense comparator is parameter-matched to R2S-MoE within 1% ({results['training']['dense']['parameters']:,} versus {results['training']['r2s_moe']['parameters']:,} parameters), although training and inference compute are not otherwise identical.",
-        "",
-        "Neural targets were standardized with training-only statistics; saved predictions and metrics are in delay seconds. Model selection used the first chronological half of validation and calibration/alert tuning used the later half.",
+        "This run evaluates the models present in the resolved configuration. Neural targets were standardized with training-only statistics; saved predictions and metrics are in delay seconds. Model selection used the first chronological half of validation and calibration/alert tuning used the later half.",
         "",
         "## Intended use",
         "",
@@ -139,6 +137,30 @@ def write_reports(run_dir: str | Path, dataset_manifest: str | Path) -> None:
                 selected_metrics["mean_absolute_coverage_error"],
             )
         )
+
+    if "r2s_moe" not in clean or "dense" not in clean:
+        findings = [
+            "# Variant findings",
+            "",
+            "This is a focused R4S-MoE variant run. It intentionally contains only the models listed in the resolved configuration, so the full pilot comparison criteria are not applicable.",
+            "",
+            "| Model | Static MAE (s) | Static WIS | Online MAE (s) | Online WIS |",
+            "|---|---:|---:|---:|---:|",
+        ]
+        for name, static_mae, static_score, online_mae, online_score, _coverage in rows:
+            findings.append(
+                f"| {name} | {static_mae if static_mae is not None else '—'} | {static_score if static_score is not None else '—'} | {online_mae if online_mae is not None else '—'} | {online_score if online_score is not None else '—'} |"
+            )
+        findings.extend(
+            [
+                "",
+                "The run uses the same chronological split, calibration path, and synthetic corruption scenarios as the full pilot. Results are exploratory and should be compared with matching variant runs, not treated as a complete baseline benchmark.",
+            ]
+        )
+        (root / "final_findings.md").write_text(
+            "\n".join(findings) + "\n", encoding="utf-8"
+        )
+        return
 
     r2s = clean["r2s_moe"]
     static_wis = r2s["static"]["wis"]
