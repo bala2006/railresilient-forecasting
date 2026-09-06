@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "Citation information for RailResilient"
+title: "RailResilient: Uncertainty-Calibrated Railway Forecasting under Unreliable Feeds"
+type: software
+license: MIT
+authors:
+  - family-names: Moole
+    given-names: Bala Chandra Sekhar Reddy
+    website: https://balachandrasekhar.me
+repository-code: https://github.com/bala2006/railresilient-forecasting
+abstract: >-
+  CPU-first research pipeline for probabilistic railway delay forecasting under
+  delayed, missing, stale, or corrupted real-time observations.

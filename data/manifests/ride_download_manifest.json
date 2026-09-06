@@ -1,0 +1,69 @@
+{
+  "dataset": "orailix/ride-silver",
+  "revision": "bfecc4ad665d59fd2acf3e1f37beba2a7f94ff74",
+  "license": "CC-BY-4.0",
+  "attribution": [
+    "RIDE",
+    "Infrabel",
+    "Open-Meteo"
+  ],
+  "verification": "SHA-256 is recorded for local reproducibility; upstream trusted hashes were unavailable.",
+  "files": [
+    {
+      "month": "202301",
+      "path": "/projects/sandbox/data/raw/ride-silver/events/events_202301.parquet",
+      "bytes": 29703793,
+      "sha256": "7d40e8ab3beb9b31caa735f1992e5692c525981e7cf962b25851a72a2449f1b9",
+      "url": "https://huggingface.co/datasets/orailix/ride-silver/resolve/bfecc4ad665d59fd2acf3e1f37beba2a7f94ff74/events/events_202301.parquet"
+    },
+    {
+      "month": "202302",
+      "path": "/projects/sandbox/data/raw/ride-silver/events/events_202302.parquet",
+      "bytes": 26648512,
+      "sha256": "e819466d9fea562df260711a8baa18d2d9db2704607547337407894fd9d80a3b",
+      "url": "https://huggingface.co/datasets/orailix/ride-silver/resolve/bfecc4ad665d59fd2acf3e1f37beba2a7f94ff74/events/events_202302.parquet"
+    },
+    {
+      "month": "202303",
+      "path": "/projects/sandbox/data/raw/ride-silver/events/events_202303.parquet",
+      "bytes": 29337284,
+      "sha256": "672ac70e210ff7e736c41a8a6158b34d2a638a34f0601ba99345eaee34d84e06",
+      "url": "https://huggingface.co/datasets/orailix/ride-silver/resolve/bfecc4ad665d59fd2acf3e1f37beba2a7f94ff74/events/events_202303.parquet"
+    },
+    {
+      "month": "202304",
+      "path": "/projects/sandbox/data/raw/ride-silver/events/events_202304.parquet",
+      "bytes": 26937781,
+      "sha256": "67edfb5ac7aa8ad5b9f4c9f55ae742a00492595aff088ca645b546b7e2119756",
+      "url": "https://huggingface.co/datasets/orailix/ride-silver/resolve/bfecc4ad665d59fd2acf3e1f37beba2a7f94ff74/events/events_202304.parquet"
+    },
+    {
+      "month": "202401",
+      "path": "/projects/sandbox/data/raw/ride-silver/events/events_202401.parquet",
+      "bytes": 32494403,
+      "sha256": "b5e1d3f7914497ac7eef24340d383945b9a078f85ee842c731a3b3b974bea808",
+      "url": "https://huggingface.co/datasets/orailix/ride-silver/resolve/bfecc4ad665d59fd2acf3e1f37beba2a7f94ff74/events/events_202401.parquet"
+    },
+    {
+      "month": "202402",
+      "path": "/projects/sandbox/data/raw/ride-silver/events/events_202402.parquet",
+      "bytes": 30563712,
+      "sha256": "bf7af97a6ba362bd352dd70e3d8e61f9dce46378edc9b827930f9f99a410bef6",
+      "url": "https://huggingface.co/datasets/orailix/ride-silver/resolve/bfecc4ad665d59fd2acf3e1f37beba2a7f94ff74/events/events_202402.parquet"
+    },
+    {
+      "month": "202501",
+      "path": "/projects/sandbox/data/raw/ride-silver/events/events_202501.parquet",
+      "bytes": 32438586,
+      "sha256": "0196cda5568ce3cdc82dd2ac8f1029061603fd629490ddb5dab73d8651aaf08d",
+      "url": "https://huggingface.co/datasets/orailix/ride-silver/resolve/bfecc4ad665d59fd2acf3e1f37beba2a7f94ff74/events/events_202501.parquet"
+    },
+    {
+      "month": "202502",
+      "path": "/projects/sandbox/data/raw/ride-silver/events/events_202502.parquet",
+      "bytes": 25322906,
+      "sha256": "09c7fb7c5f4508ca76c3ce0c38f5bc6c49d7f4c1da8220eb6c4b941b4c5da49b",
+      "url": "https://huggingface.co/datasets/orailix/ride-silver/resolve/bfecc4ad665d59fd2acf3e1f37beba2a7f94ff74/events/events_202502.parquet"
+    }
+  ]
+}

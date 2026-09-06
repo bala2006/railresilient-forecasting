@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="620" viewBox="0 0 1100 620" role="img" aria-labelledby="title desc">
+  <title id="title">Stress robustness comparison</title>
+  <desc id="desc">Grouped bar chart of WIS degradation under packet loss, staleness, outage, and combined corruption for v2 R2S and v3 R3S.</desc>
+  <style>.bg{fill:#f8fafc}.title{font:700 28px sans-serif;fill:#0f172a}.axis{font:14px sans-serif;fill:#475569}.label{font:600 16px sans-serif;fill:#0f172a}.value{font:700 14px sans-serif;fill:#0f172a}.r2s{fill:#94a3b8}.r3s{fill:#f97316}.grid{stroke:#cbd5e1;stroke-width:1}</style>
+  <rect width="1100" height="620" class="bg"/>
+  <text x="45" y="45" class="title">WIS degradation under feed corruption — lower is better</text>
+  <text x="45" y="72" class="axis">v2 values are two-seed aggregates; v3 is one seed.</text>
+  <g class="grid"><line x1="90" y1="105" x2="1020" y2="105"/><line x1="90" y1="205" x2="1020" y2="205"/><line x1="90" y1="305" x2="1020" y2="305"/><line x1="90" y1="405" x2="1020" y2="405"/><line x1="90" y1="505" x2="1020" y2="505"/></g>
+  <g class="axis"><text x="70" y="510" text-anchor="end">0%</text><text x="70" y="410" text-anchor="end">10%</text><text x="70" y="310" text-anchor="end">20%</text><text x="70" y="210" text-anchor="end">30%</text><text x="70" y="110" text-anchor="end">40%</text></g>
+  <rect x="120" y="500" width="54" height="5" class="r2s"/><rect x="180" y="497" width="54" height="8" class="r3s"/><text x="147" y="490" text-anchor="middle" class="value">0.45</text><text x="207" y="487" text-anchor="middle" class="value">0.84</text><text x="177" y="545" text-anchor="middle" class="label">Packet loss</text>
+  <rect x="350" y="438" width="54" height="67" class="r2s"/><rect x="410" y="465" width="54" height="40" class="r3s"/><text x="377" y="428" text-anchor="middle" class="value">6.68</text><text x="437" y="455" text-anchor="middle" class="value">3.98</text><text x="407" y="545" text-anchor="middle" class="label">Staleness</text>
+  <rect x="580" y="315" width="54" height="190" class="r2s"/><rect x="640" y="335" width="54" height="170" class="r3s"/><text x="607" y="305" text-anchor="middle" class="value">18.99</text><text x="667" y="325" text-anchor="middle" class="value">16.96</text><text x="637" y="545" text-anchor="middle" class="label">Outage</text>
+  <rect x="810" y="400" width="54" height="105" class="r2s"/><rect x="870" y="419" width="54" height="86" class="r3s"/><text x="837" y="390" text-anchor="middle" class="value">10.48</text><text x="897" y="409" text-anchor="middle" class="value">8.63</text><text x="867" y="545" text-anchor="middle" class="label">Combined</text>
+  <rect x="790" y="580" width="18" height="18" class="r2s"/><text x="815" y="595" class="axis">v2 R2S aggregate</text><rect x="955" y="580" width="18" height="18" class="r3s"/><text x="980" y="595" class="axis">v3 R3S</text>
+</svg>

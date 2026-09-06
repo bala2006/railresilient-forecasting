@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="570" viewBox="0 0 1000 570" role="img" aria-labelledby="title desc">
+  <title id="title">Clean WIS benchmark</title>
+  <desc id="desc">Horizontal bar chart showing lower clean online weighted interval score for R3S-MoE than competing models.</desc>
+  <style>.bg{fill:#f8fafc}.title{font:700 28px sans-serif;fill:#0f172a}.axis{font:14px sans-serif;fill:#475569}.name{font:600 17px sans-serif;fill:#0f172a}.value{font:700 17px sans-serif;fill:#0f172a}.bar{fill:#94a3b8}.best{fill:#f97316}.grid{stroke:#cbd5e1;stroke-width:1}</style>
+  <rect width="1000" height="570" class="bg"/>
+  <text x="40" y="45" class="title">Clean online WIS — lower is better</text>
+  <text x="40" y="72" class="axis">R3S-MoE is the best model in the single-seed v3 run.</text>
+  <g class="grid"><line x1="270" y1="100" x2="270" y2="505"/><line x1="445" y1="100" x2="445" y2="505"/><line x1="620" y1="100" x2="620" y2="505"/><line x1="795" y1="100" x2="795" y2="505"/><line x1="970" y1="100" x2="970" y2="505"/></g>
+  <g class="axis"><text x="270" y="530" text-anchor="middle">0</text><text x="445" y="530" text-anchor="middle">10</text><text x="620" y="530" text-anchor="middle">20</text><text x="795" y="530" text-anchor="middle">30</text><text x="970" y="530" text-anchor="middle">40</text></g>
+  <text x="40" y="145" class="name">R3S-MoE</text><rect x="270" y="122" width="502.6" height="32" rx="8" class="bar best"/><text x="790" y="145" class="value">28.72</text>
+  <text x="40" y="215" class="name">Dense</text><rect x="270" y="192" width="526.6" height="32" rx="8" class="bar"/><text x="815" y="215" class="value">30.09</text>
+  <text x="40" y="285" class="name">R2S-MoE</text><rect x="270" y="262" width="532.2" height="32" rx="8" class="bar"/><text x="820" y="285" class="value">30.41</text>
+  <text x="40" y="355" class="name">GRU</text><rect x="270" y="332" width="542.2" height="32" rx="8" class="bar"/><text x="830" y="355" class="value">30.98</text>
+  <text x="40" y="425" class="name">Persistence</text><rect x="270" y="402" width="556.9" height="32" rx="8" class="bar"/><text x="845" y="425" class="value">31.82</text>
+  <text x="40" y="480" class="axis">Source: v3 test run, online mode for learned models; static mode for persistence.</text>
+</svg>

@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.1.0",
+  "context_events": 8,
+  "future_events": 4,
+  "causal_contract": "All context observed timestamps are <= origin; every target matures strictly after origin.",
+  "sampling": {
+    "candidate_unit": "one uniformly selected valid anchor per eligible (service_date, train_id) journey",
+    "train": "target-aware severe/recovery enrichment when capped",
+    "validation": "uniform outcome-blind sample when capped",
+    "test": "uniform outcome-blind sample when capped"
+  },
+  "splits": {
+    "train": {
+      "samples": 80000,
+      "path": "/projects/sandbox/data/processed/ride-silver-pilot/train.npz",
+      "forecast_origin_min_ns": 1672552797000000000,
+      "forecast_origin_max_ns": 1682904636000000000,
+      "severe_fraction": 0.2697,
+      "regime_counts": {
+        "normal": 52523,
+        "shock": 21697,
+        "recovery": 5780
+      }
+    },
+    "validation": {
+      "samples": 20000,
+      "path": "/projects/sandbox/data/processed/ride-silver-pilot/validation.npz",
+      "forecast_origin_min_ns": 1704084776000000000,
+      "forecast_origin_max_ns": 1709253518000000000,
+      "severe_fraction": 0.1878,
+      "regime_counts": {
+        "normal": 14954,
+        "shock": 4269,
+        "recovery": 777
+      }
+    },
+    "test": {
+      "samples": 30000,
+      "path": "/projects/sandbox/data/processed/ride-silver-pilot/test.npz",
+      "forecast_origin_min_ns": 1735693362000000000,
+      "forecast_origin_max_ns": 1740780402000000000,
+      "severe_fraction": 0.13736666666666666,
+      "regime_counts": {
+        "normal": 23969,
+        "shock": 4941,
+        "recovery": 1090
+      }
+    }
+  }
+}
