@@ -96,7 +96,17 @@ docs/                     Architecture, graphs, benchmark tables, v1/v2/v3 analy
 research_prd.md           Full research plan, assumptions, and acceptance criteria
 data/manifests/           Pinned download and prepared-data manifests
 artifacts/                Ignored local outputs from training runs
+demo/                     Interactive railway simulation and optional model API
 ```
+
+Try the interactive simulation locally:
+
+```bash
+uv run python demo/server.py
+# open http://127.0.0.1:8765
+```
+
+The demo works in a clean checkout with a deterministic simulation fallback. If a compatible `r3s_moe.pt` checkpoint and matching `normalization.json` are supplied, the same API loads R3S-MoE on CPU. See [`demo/README.md`](demo/README.md) for details.
 
 The repository does **not** commit raw data, processed arrays, model checkpoints, or prediction bundles. The data downloader recreates the public inputs, and the compact benchmark summaries are included in `docs/`.
 
