@@ -1,0 +1,11 @@
+{
+  "$schema": "https://schema.cloudflarestorage.com/wrangler/config-schema.json",
+  "name": "railresilient-simulation",
+  "main": "worker.js",
+  "compatibility_date": "2026-09-06",
+  "assets": {
+    "directory": "../static",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  }
+}
